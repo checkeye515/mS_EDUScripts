@@ -14,12 +14,12 @@ $dellCommand = $addremovelist | ForEach-Object {Get-ItemProperty $_.PSPath} | Wh
 
 
 if ($Version){
-    if (Test-Path -Path "C:\Program Files (x86)\Dell\CommandUpdate\dcu-cli.exe"){
+    <#if (Test-Path -Path "C:\Program Files (x86)\Dell\CommandUpdate\dcu-cli.exe"){
         return "Customize x86"
     }
     elseif (Test-Path -Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe"){
         return "Customize x64"
-    }
+    }#>
     if ($dellCommand){
         $dellCommandVersion = [version]$dellCommand.DisplayVersion
         if (($dellCommandVersion.Major -eq 4) -and ($dellCommandVersion.minor -lt 1)){
