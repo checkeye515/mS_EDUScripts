@@ -22,10 +22,10 @@ if ($Version){
     }
     if ($dellCommand){
         $dellCommandVersion = [version]$dellCommand.DisplayVersion
-        if (($dellCommandVersion.Major -eq 3) -and ($dellCommandVersion.minor -lt 1)){
+        if (($dellCommandVersion.Major -eq 4) -and ($dellCommandVersion.minor -lt 1)){
             return "Update"
         }
-        elseif (($dellCommandVersion.Major -eq 3) -and ($dellCommandVersion.minor -eq 1)){
+        elseif (($dellCommandVersion.Major -eq 4) -and ($dellCommandVersion.minor -eq 1)){
             if ($dellCommand.InstallLocation -like "*x86*"){
                 return "Customize x86"
             }
