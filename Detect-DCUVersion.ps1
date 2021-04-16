@@ -6,18 +6,14 @@ if(Test-Path -Path "C:\Program Files (x86)\Dell\CommandUpdate"){
     $Path = "C:\Program Files (x86)\Dell\CommandUpdate"
     $PathExists = $True }
 
-if(Test-Path -Path "C:\Program Files\WindowsApps\Dellinc.DellCommandUpdate*"){ 
-    $DCUVersion = "3.0"
-    return $DCUVersion}
+if(Test-Path -Path "C:\Program Files\WindowsApps\Dellinc.DellCommandUpdate*"){
+    $PathExists = $False }
 
 else { $PathExists = $False }
 
+$DCUVersion = "3.0.0"
+
 If($Pathexists){
-    $Path = "C:\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"
     $DCUVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($Path) | Select -ExpandProperty FileVersion
     return $DCUVersion
-}
-else {
-   $DCUVersion = "3.0"
-   return $DCUVersion
 }
