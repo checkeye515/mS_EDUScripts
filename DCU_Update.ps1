@@ -1,42 +1,35 @@
-#This script is designed to be used with an RMA, in this case Kaseya.  It will look for an installation of
-#Dell Command update and check the version number, then return a value back to the RMA.
-#The RMA will then perform an action depending on the return value. You can run the script with a switch parameter
-#to determine what info is being returned.
+if(Test-Path -Path "C:\Program Files\Dell\CommandUpdate\dellcommandupdate.exe"){ 
+    $Path = "C:\Program Files\Dell\CommandUpdate\dellcommandupdate.exe"
+    $PathExists = $True }
 
-[CmdletBinding()]
-param (
-    [switch]$Version,
-    [switch]$Uninstall
-)
+if(Test-Path -Path "C:\Program Files (x86)\Dell\CommandUpdate"){ 
+    $Path = "C:\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"
+    $PathExists = $True }
 
-$addremovelist = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\windows\CurrentVersion\Uninstall
-$dellCommand = $addremovelist | ForEach-Object {Get-ItemProperty $_.PSPath} | Where-Object DisplayName -like "Dell Command*"
+if(Test-Path -Path "C:\Program Files\WindowsApps\Dellinc.DellCommandUpdate*"){
+    $PathExists = $False
+    $DCUVersion = "3.0.0" }
+
+else { $PathExists = $False }
 
 
-if ($Version){
-    <#if (Test-Path -Path "C:\Program Files (x86)\Dell\CommandUpdate\dcu-cli.exe"){
-        return "Customize x86"
-    }
-    elseif (Test-Path -Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe"){
-        return "Customize x64"
-    }#>
-    if ($dellCommand){
-        $dellCommandVersion = [version]$dellCommand.DisplayVersion
-        if (($dellCommandVersion.Major -eq 4) -and ($dellCommandVersion.minor -lt 1)){
-            return "Update"
-        }
-        elseif (($dellCommandVersion.Major -eq 4) -and ($dellCommandVersion.minor -eq 1)){
-            if ($dellCommand.InstallLocation -like "*x86*"){
-                return "Customize x86"
-            }
-            return "Customize x64"
-        }
-    }
-    else {
-        return "Install"
-    }
+If($Pathexists){
+    $DCUVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($Path) | Select -ExpandProperty FileVersion
+    return $DCUVersion
 }
 
-if ($Uninstall){
-    return $dellCommand.UninstallString
+
+$UninstallString = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall |Get-ItemProperty |Where-Object {$_.DisplayName -like "Dell Command | Update*"} |Select-Object -expandproperty UninstallString 
+if($UninstallString.length -eq '0') {
+    $UninstallString = Get-ChildItem -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall |Get-ItemProperty |Where-Object {$_.DisplayName -like "Dell Command | Update*"} |Select-Object -expandproperty UninstallString 
+}
+
+if($DCUVersion -lt 4 -or $DCUVersion.length -eq "0"){
+    if($UninstallString.length -gt "0"){
+        $UninstallString = $UninstallString + "/qn"
+        & cmd /c $UninstallString
+    }
+    Invoke-WebRequest "https://dl.dell.com/FOLDER06986400M/2/Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE" -OutFile "C:\kworking\k01\Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE"
+    $InstallDCU = "c:\kworking\k01\Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE /s"# l=C:\kworking\k01\DCUInstallLog.txt"
+    & cmd /c $InstallDCU
 }
