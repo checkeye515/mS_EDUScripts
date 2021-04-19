@@ -23,10 +23,12 @@ If($Pathexists){
 }
 
 if($DCUVersion -lt 4){
-    $UninstallString = $UninstallString + "/qn"
-    & cmd /c $UninstallString
+    #$UninstallString = $UninstallString + "/qn"
+    #& cmd /c $UninstallString
+    $argumentList = $UninstallString.Split()[1] + " /qn"
+    Start-Process -Wait -FilePath "C:\Windows\System32\msiexec.exe" -ArgumentList $argumentList
 
     Invoke-WebRequest "https://dl.dell.com/FOLDER06986400M/2/Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE" -OutFile "C:\kworking\k01\Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE"
     $InstallDCU = "c:\kworking\k01\Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE /s"# l=C:\kworking\k01\DCUInstallLog.txt"
-    & cmd /c $InstallDCU
+    Start-Process -FilePath $InstallDCU
 }
