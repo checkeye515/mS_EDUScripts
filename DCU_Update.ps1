@@ -30,5 +30,5 @@ if($DCUVersion -lt 4){
 
     Invoke-WebRequest "https://dl.dell.com/FOLDER06986400M/2/Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE" -OutFile "C:\kworking\k01\Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE"
     $InstallDCU = "c:\kworking\k01\Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE"# l=C:\kworking\k01\DCUInstallLog.txt"
-    Start-Process -Wait -FilePath $InstallDCU -ArguementList "/s" -PassThru
+    Start-Process -Wait -FilePath $InstallDCU -ArgumentList "/s" -PassThru
 }
