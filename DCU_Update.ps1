@@ -10,7 +10,10 @@ elseif(Test-Path -Path "C:\Program Files (x86)\Dell\CommandUpdate"){
 
 elseif(Test-Path -Path "C:\Program Files\WindowsApps\Dellinc.DellCommandUpdate*"){
     $PathExists = $True
-    $DCUVersion = "3.0.0" }
+    $DCUVersion = "3.0.0"
+    $WindowsApp = Get-ChildItem -path "C:\Program Files\WindowsApps\DellInc.DellCommandUpdate*"
+    Remove-AppxPackage $windows[0].name
+    }
 
 else { $PathExists = $False }
 
