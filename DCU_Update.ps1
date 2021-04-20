@@ -1,21 +1,21 @@
 if(Test-Path -Path "C:\Program Files\Dell\CommandUpdate\dellcommandupdate.exe"){ 
     $Path = "C:\Program Files\Dell\CommandUpdate\dellcommandupdate.exe"
+    $DCUVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($Path) | Select -ExpandProperty FileVersion
     $PathExists = $True }
 
 elseif(Test-Path -Path "C:\Program Files (x86)\Dell\CommandUpdate"){ 
     $Path = "C:\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"
+    $DCUVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($Path) | Select -ExpandProperty FileVersion
     $PathExists = $True }
 
 elseif(Test-Path -Path "C:\Program Files\WindowsApps\Dellinc.DellCommandUpdate*"){
-    $PathExists = $False
+    $PathExists = $True
     $DCUVersion = "3.0.0" }
 
 else { $PathExists = $False }
 
 
-If($Pathexists){
-    $DCUVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($Path) | Select -ExpandProperty FileVersion
-    
+If($Pathexists){    
     $UninstallString = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall |Get-ItemProperty |Where-Object {$_.DisplayName -like "Dell Command | Update*"} |Select-Object -expandproperty UninstallString 
         if($UninstallString.length -eq '0') {
             $UninstallString = Get-ChildItem -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall |Get-ItemProperty |Where-Object {$_.DisplayName -like "Dell Command | Update*"} |Select-Object -expandproperty UninstallString 
